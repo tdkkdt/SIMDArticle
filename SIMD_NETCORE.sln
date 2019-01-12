@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIMDArticle", "SIMDArticle.csproj", "{B129031A-45F4-4A33-9F7F-76BBE0367A9A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B129031A-45F4-4A33-9F7F-76BBE0367A9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B129031A-45F4-4A33-9F7F-76BBE0367A9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B129031A-45F4-4A33-9F7F-76BBE0367A9A}.Debug|x64.ActiveCfg = Debug|x64
+		{B129031A-45F4-4A33-9F7F-76BBE0367A9A}.Debug|x64.Build.0 = Debug|x64
+		{B129031A-45F4-4A33-9F7F-76BBE0367A9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B129031A-45F4-4A33-9F7F-76BBE0367A9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B129031A-45F4-4A33-9F7F-76BBE0367A9A}.Release|x64.ActiveCfg = Release|x64
+		{B129031A-45F4-4A33-9F7F-76BBE0367A9A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {27B7712E-BDC0-4870-B3E5-E2284CAE7A25}
+	EndGlobalSection
+EndGlobal
