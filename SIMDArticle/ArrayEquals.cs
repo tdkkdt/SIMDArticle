@@ -9,7 +9,7 @@ using BenchmarkDotNet.Attributes;
 using NUnit.Framework;
 
 namespace SIMDArticle {
-    [RyuJitX64Job, DisassemblyDiagnoser]
+    [RyuJitX64Job, DisassemblyDiagnoser(printPrologAndEpilog:true)]
     public class ArrayEqualsBenchmark {
         [Params(10000, 100000, 1000000)]
         public int ItemsCount { get; set; }
@@ -65,18 +65,19 @@ namespace SIMDArticle {
             int vectorSize = 256 / 8;
             int i = 0;
             const int equalsMask = unchecked((int) (0b1111_1111_1111_1111_1111_1111_1111_1111));
-            fixed (byte* ptrA = ArrayA)
-            fixed (byte* ptrB = ArrayB) {
+            var arrayA = ArrayA;
+            var arrayB = ArrayB;
+            fixed (byte* ptrA = arrayA)
+            fixed (byte* ptrB = arrayB) {
                 for (; i < ArrayA.Length - vectorSize; i += vectorSize) {
-                    var va = Avx2.LoadVector256(ptrA + i);
-                    var vb = Avx2.LoadVector256(ptrB + i);
-                    var areEqual = Avx2.CompareEqual(va, vb);
-                    if (Avx2.MoveMask(areEqual) != equalsMask) {
+                    byte* ptrA1 = ptrA + i;
+                    byte* ptrB1 = ptrB + i;
+                    if (Avx2.MoveMask(Avx2.CompareEqual(Avx2.LoadVector256(ptrA1), Avx2.LoadVector256(ptrB1))) != equalsMask) {
                         return false;
                     }
                 }
-                for (; i < ArrayA.Length; i++) {
-                    if (ArrayA[i] != ArrayB[i])
+                for (; i < arrayA.Length; i++) {
+                    if (arrayA[i] != arrayB[i])
                         return false;
                 }
                 return true;
