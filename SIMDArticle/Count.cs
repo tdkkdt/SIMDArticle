@@ -18,14 +18,10 @@ namespace SIMDArticle {
 
         public int[] Array { get; set; }
 
-        [IterationSetup]
-        public void IterationSetup() {
-            Random rnd = new Random(31337);
-            Array = new int[ItemsCount];
-            for (int i = 0; i < ItemsCount; i++) {
-                Array[i] = rnd.Next(-10000, 10000);
-            }
-            Item = rnd.Next(-10000, 10000);
+        [GlobalSetup]
+        public void GlobalSetup() {
+            Array = Utils.GetRandomIntArray(ItemsCount);
+            Item = Utils.GetRandomValue();
         }
 
         [Benchmark(Baseline = true)]
@@ -49,7 +45,7 @@ namespace SIMDArticle {
             var accResult = new Vector<int>();
             int i;
             var array = Array;
-            for (i = 0; i < array.Length - vectorSize; i += vectorSize) {
+            for (i = 0; i <= array.Length - vectorSize; i += vectorSize) {
                 var v = new Vector<int>(array, i);
                 var areEqual = Vector.Equals(v, mask);
                 accResult = Vector.Subtract(accResult, areEqual);
@@ -68,8 +64,6 @@ namespace SIMDArticle {
         [Benchmark]
         public unsafe int Intrinsics() {
             int vectorSize = 256 / 8 / 4;
-            //var mask = Avx2.SetAllVector256(Item);
-            //var mask = Avx2.SetVector256(Item, Item, Item, Item, Item, Item, Item, Item);
             var temp = stackalloc int[vectorSize];
             for (int j = 0; j < vectorSize; j++) {
                 temp[j] = Item;
@@ -79,7 +73,7 @@ namespace SIMDArticle {
             int i;
             var array = Array;
             fixed (int* ptr = array) {
-                for (i = 0; i < array.Length - vectorSize; i += vectorSize) {
+                for (i = 0; i <= array.Length - vectorSize; i += vectorSize) {
                     var v = Avx2.LoadVector256(ptr + i);
                     var areEqual = Avx2.CompareEqual(v, mask);
                     accVector = Avx2.Subtract(accVector, areEqual);
@@ -131,7 +125,7 @@ namespace SIMDArticle {
         static void TestHelper(int itemsCount) {
             var countBenchmark = new CountBenchmark();
             countBenchmark.ItemsCount = itemsCount;
-            countBenchmark.IterationSetup();
+            countBenchmark.GlobalSetup();
             int naive = countBenchmark.Naive();
             Assert.AreEqual(naive, countBenchmark.LINQ());
             Assert.AreEqual(naive, countBenchmark.Vectors());
@@ -145,7 +139,7 @@ namespace SIMDArticle {
             var countBenchmark = new CountBenchmark();
             const int count = 1000000;
             countBenchmark.ItemsCount = count;
-            countBenchmark.IterationSetup();
+            countBenchmark.GlobalSetup();
             for (int i = 0; i < countBenchmark.ItemsCount; i += 8) {
                 for (int j = 0; j < 8; j++) {
                     countBenchmark.Array[i + j] = 0;

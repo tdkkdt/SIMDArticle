@@ -16,13 +16,9 @@ namespace SIMDArticle {
 
         public int[] Array { get; set; }
 
-        [IterationSetup]
-        public void IterationSetup() {
-            Random rnd = new Random(31337);
-            Array = new int[ItemsCount];
-            for (int i = 0; i < ItemsCount; i++) {
-                Array[i] = rnd.Next(-10000, 10000);
-            }
+        [GlobalSetup]
+        public void GlobalSetup() {
+            Array = Utils.GetRandomIntArray(ItemsCount);
         }
 
         [Benchmark(Baseline = true)]
@@ -43,7 +39,7 @@ namespace SIMDArticle {
             var accVector = Vector<int>.Zero;
             int i;
             var array = Array;
-            for (i = 0; i < array.Length - vectorSize; i += vectorSize) {
+            for (i = 0; i <= array.Length - vectorSize; i += vectorSize) {
                 var v = new Vector<int>(array, i);
                 accVector = Vector.Add(accVector, v);
             }
@@ -62,7 +58,7 @@ namespace SIMDArticle {
             int i;
             var array = Array;
             fixed (int* ptr = array) {
-                for (i = 0; i < array.Length - vectorSize; i += vectorSize) {
+                for (i = 0; i <= array.Length - vectorSize; i += vectorSize) {
                     var v = Avx2.LoadVector256(ptr + i);
                     accVector = Avx2.Add(accVector, v);
                 }
@@ -112,7 +108,7 @@ namespace SIMDArticle {
         static void TestHelper(int itemsCount) {
             var arraySumBenchmark = new ArraySumBenchmark();
             arraySumBenchmark.ItemsCount = itemsCount;
-            arraySumBenchmark.IterationSetup();
+            arraySumBenchmark.GlobalSetup();
             long naive = arraySumBenchmark.Naive();
             Assert.AreEqual(naive, arraySumBenchmark.LINQ());
             Assert.AreEqual(naive, arraySumBenchmark.Vectors());
